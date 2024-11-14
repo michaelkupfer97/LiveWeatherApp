@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Weather App</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+
+    <body>
+        <div class="card">
+            <div class="search">
+                <input type="text" id="cityInput" placeholder="Enter city name"
+                spellcheck="false">
+                <button onclick="checkWeather()"><img src="images/search.png" ></button>
+            </div>
+            <div class="wether">
+                <img src="images/rain.png" class="Weather-icon" id="weatherIcon">
+                <h1 class="temp"  id="temp">22°c</h1>
+                <h2 class="city" id="city">New York</h2>
+                <div class="details">
+                    <div class="col">
+                        <img src="images/humidity.png">
+                        <div>
+                            <p class="humidity" id="humidity">50%</p>
+                            <p>humidity</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <img src="images/wind.png">
+                        <div>
+                            <p class="wind" id="wind">15km/h</p>
+                            <p>wind speed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            //go to https://openweathermap.org/ and make an apiKey.
+            const apiKey = "YOUR_API_KEY";
+
+            async function checkWeather() {
+
+            const city = document.getElementById('cityInput').value;
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?units=metric&q=${city}&appid=${apiKey}`;
+            
+            try {
+                //wait to the data from the url api
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error("City not found");
+                //wait to the data from the response from fetch
+        const data = await response.json();
+
+        // Update the HTML with the received data
+        document.getElementById('city').innerText = data.name;
+        document.getElementById('temp').innerText = Math.round(data.main.temp) + "°c";
+        document.getElementById('humidity').innerText = data.main.humidity + "%";
+        document.getElementById('wind').innerText = data.wind.speed + " km/h";
+
+        // Select weather icon based on the main weather description
+        const weatherIcon = document.getElementById('weatherIcon');
+        const mainWeather = data.weather[0].main.toLowerCase();
+        
+        //all photo based on actual weather
+        if (mainWeather.includes("clear")) {
+            weatherIcon.src = "images/clear.png";
+        } else if (mainWeather.includes("clouds")) {
+            weatherIcon.src = "images/clouds.png";
+        } else if (mainWeather.includes("drizzle")) {
+            weatherIcon.src = "images/drizzle.png";
+        } else if (mainWeather.includes("rain")) {
+            weatherIcon.src = "images/rain.png";
+        } else if (mainWeather.includes("snow")) {
+            weatherIcon.src = "images/snow.png";
+        } else if (mainWeather.includes("mist")) {
+            weatherIcon.src = "images/mist.png";
+        } else if (mainWeather.includes("humidity")) {
+            weatherIcon.src = "images/humidity.png";
+        } else if (mainWeather.includes("wind")) {
+            weatherIcon.src = "images/wind.png";
+        } else {
+            // Default icon if no match is found
+            weatherIcon.src = "images/default.png";
+        }
+        //error if somthing goes wrong
+    } catch (error) {
+        alert("City not found or other error");
+        console.error(error);
+    }
+        }
+        
+        </script>
+    </body>
+</html>
